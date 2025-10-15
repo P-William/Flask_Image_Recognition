@@ -1,8 +1,6 @@
-# test_acceptance_edge_cases.py
+"""Edge case tests for Flask image prediction application."""
 
 from io import BytesIO
-import pytest
-from threading import Thread
 
 # Helper function for concurrent image uploads
 def upload_image(client, img_data):

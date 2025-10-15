@@ -43,12 +43,15 @@ Install the dependencies from the **requirements.txt** file.
 pip install -r requirements.txt
 ```
 
+# Python Version
+Newer versions of python do not work with this project. You need python 3.9 or 3.10.
+
 # Run
 
 **cd** into the current directory and run the script.
 
 ```commandline
-flask --app app.py run --debug
+flask --app app.py run --debugger --reload
 ```
 Click [here](https://geekpython.in/run-flask-app-from-the-command-line-in-windows) to get the detailed guide on running the Flask app from the command line.
 
