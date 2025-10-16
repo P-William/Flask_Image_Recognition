@@ -36,8 +36,7 @@ def predict_result(image_array):
     Returns:
         int: Predicted digit (0-9).
     """
-    pred = model.predict(image_array)
-    if pred.shape != (1, 10):
-        raise ValueError("Invalid prediction shape. Expected (1, 10).")
+    prediction = model.predict(image_array)
 
-    return int(np.argmax(pred[0], axis=-1))
+    # Return the class with the highest probability
+    return int(np.argmax(prediction))

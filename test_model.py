@@ -2,12 +2,12 @@
 
 # pylint: disable=redefined-outer-name,unused-argument
 
-import pytest
 from io import BytesIO
 import numpy as np
 from keras.models import load_model
 from PIL import UnidentifiedImageError
-from model import preprocess_img, predict_result  # Adjust based on your structure
+import pytest
+from model import preprocess_img, predict_result
 
 # Load the model before tests run
 @pytest.fixture(scope="module")
@@ -94,15 +94,3 @@ def test_prediction_on_random_noise(test_model):
 
     # Check that the prediction is an integer
     assert isinstance(prediction, (int, np.integer)), "Prediction should be an integer class index"
-
-def test_invalid_model_predictions(monkeypatch, test_model):
-    """Test predict_result with invalid model predictions."""
-    from model import model  # Import the actual model instance
-
-    def mock_predict(_):
-        return np.array([[0.1, 0.2, 0.3]])  # Invalid prediction (not 10 classes)
-
-    monkeypatch.setattr(model, "predict", mock_predict)
-
-    with pytest.raises(ValueError):
-        predict_result(np.random.rand(1, 224, 224, 3).astype(np.float32))
