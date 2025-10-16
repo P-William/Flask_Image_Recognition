@@ -3,8 +3,10 @@
 # pylint: disable=redefined-outer-name,unused-argument
 
 import pytest
+from io import BytesIO
 import numpy as np
 from keras.models import load_model
+from PIL import UnidentifiedImageError
 from model import preprocess_img, predict_result  # Adjust based on your structure
 
 # Load the model before tests run
@@ -72,3 +74,35 @@ def test_model_predictions_consistency(test_model):
     assert all(p == predictions[0] for p in predictions), (
         "Predictions for the same input should be consistent"
     )
+
+def test_unsupported_file_type():
+    """Test preprocess_img with an unsupported file type."""
+    with pytest.raises(UnidentifiedImageError):
+        preprocess_img("invalid_file.txt")
+
+
+def test_empty_file_input():
+    """Test preprocess_img with an empty file input."""
+    empty_file = BytesIO()  # Simulate an empty file
+    with pytest.raises(UnidentifiedImageError):
+        preprocess_img(empty_file)
+
+def test_prediction_on_random_noise(test_model):
+    """Test predict_result with random noise as input."""
+    random_noise = np.random.rand(1, 224, 224, 3).astype(np.float32)
+    prediction = predict_result(random_noise)
+
+    # Check that the prediction is an integer
+    assert isinstance(prediction, (int, np.integer)), "Prediction should be an integer class index"
+
+def test_invalid_model_predictions(monkeypatch, test_model):
+    """Test predict_result with invalid model predictions."""
+    from model import model  # Import the actual model instance
+
+    def mock_predict(_):
+        return np.array([[0.1, 0.2, 0.3]])  # Invalid prediction (not 10 classes)
+
+    monkeypatch.setattr(model, "predict", mock_predict)
+
+    with pytest.raises(ValueError):
+        predict_result(np.random.rand(1, 224, 224, 3).astype(np.float32))
